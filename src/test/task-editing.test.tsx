@@ -10,12 +10,16 @@ function addTask(title: string) {
   fireEvent.click(screen.getByRole("button", { name: "Adicionar" }));
 }
 
+function rowFor(title: string) {
+  return screen.getByText(title).closest("li") as HTMLElement;
+}
+
 function openEdit(title: string) {
-  fireEvent.click(
-    screen.getByRole("listitem", { name: new RegExp(title) }).getByRole("button", {
-      name: "Editar",
-    }),
-  );
+  fireEvent.click(within(rowFor(title)).getByRole("button", { name: "Editar" }));
+}
+
+function removeTask(title: string) {
+  fireEvent.click(within(rowFor(title)).getByRole("button", { name: "Remover" }));
 }
 
 function typeDraft(value: string) {
