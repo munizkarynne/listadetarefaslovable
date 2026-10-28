@@ -14,6 +14,8 @@ This project was built with [Lovable](https://lovable.dev).
 
 **Live app**: https://listadetarefaslovable.lovable.app
 
+O histórico de mudanças está em [CHANGELOG.md](CHANGELOG.md).
+
 ## Build with Lovable
 
 Continue developing this project in the [Lovable editor](https://lovable.dev/projects/bef4ed0e-a3d6-4745-a325-776edf3cdb10).
