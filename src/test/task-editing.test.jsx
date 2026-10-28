@@ -5,24 +5,24 @@ import { Index } from "@/routes/index";
 
 // Helpers that drive the app the same way a user would: type in the add form,
 // click the buttons the app renders, then read the title back from the list.
-function addTask(title: string) {
+function addTask(title) {
   fireEvent.change(screen.getByPlaceholderText("Nova tarefa..."), { target: { value: title } });
   fireEvent.click(screen.getByRole("button", { name: "Adicionar" }));
 }
 
-function rowFor(title: string) {
-  return screen.getByText(title).closest("li") as HTMLElement;
+function rowFor(title) {
+  return screen.getByText(title).closest("li");
 }
 
-function openEdit(title: string) {
+function openEdit(title) {
   fireEvent.click(within(rowFor(title)).getByRole("button", { name: "Editar" }));
 }
 
-function removeTask(title: string) {
+function removeTask(title) {
   fireEvent.click(within(rowFor(title)).getByRole("button", { name: "Remover" }));
 }
 
-function typeDraft(value: string) {
+function typeDraft(value) {
   fireEvent.change(screen.getByLabelText("Editar título da tarefa"), { target: { value } });
 }
 

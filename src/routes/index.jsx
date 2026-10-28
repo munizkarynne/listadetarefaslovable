@@ -15,21 +15,19 @@ export const Route = createFileRoute("/")({
   component: Index,
 });
 
-type Task = { id: number; text: string; done: boolean };
-
 export function Index() {
-  const [tasks, setTasks] = useState<Task[]>([]);
+  const [tasks, setTasks] = useState([]);
   const [text, setText] = useState("");
-  const [editingId, setEditingId] = useState<number | null>(null);
+  const [editingId, setEditingId] = useState(null);
   const [draft, setDraft] = useState("");
   const [editError, setEditError] = useState("");
-  const draftInputRef = useRef<HTMLInputElement>(null);
+  const draftInputRef = useRef(null);
 
   useEffect(() => {
     if (editingId !== null) draftInputRef.current?.focus();
   }, [editingId]);
 
-  const add = (e: React.FormEvent) => {
+  const add = (e) => {
     e.preventDefault();
     const t = text.trim();
     if (!t) return;
@@ -37,12 +35,11 @@ export function Index() {
     setText("");
   };
 
-  const toggle = (id: number) =>
-    setTasks(tasks.map((x) => (x.id === id ? { ...x, done: !x.done } : x)));
+  const toggle = (id) => setTasks(tasks.map((x) => (x.id === id ? { ...x, done: !x.done } : x)));
 
-  const remove = (id: number) => setTasks(tasks.filter((x) => x.id !== id));
+  const remove = (id) => setTasks(tasks.filter((x) => x.id !== id));
 
-  const startEdit = (task: Task) => {
+  const startEdit = (task) => {
     setEditingId(task.id);
     setDraft(task.text);
     setEditError("");
@@ -54,7 +51,7 @@ export function Index() {
     setEditError("");
   };
 
-  const saveEdit = (e: React.FormEvent) => {
+  const saveEdit = (e) => {
     e.preventDefault();
     const next = draft.trim();
     if (!next) {
