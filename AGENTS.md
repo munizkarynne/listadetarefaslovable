@@ -11,5 +11,5 @@
 
 ## Conventions
 
-- App source is plain JavaScript with JSX (`.js`/`.jsx`) — the user asked for React + JavaScript, not TypeScript. Never add `.ts`/`.tsx` app files; only the auto-generated `src/routeTree.gen.ts` and the root `vite.config.ts`/`vitest.config.ts` stay TypeScript because the platform tooling writes or expects them.
+- App source is plain JavaScript with JSX (`.js`/`.jsx`) — the user asked for React + JavaScript, not TypeScript. Never add `.ts`/`.tsx` app files; only the auto-generated `src/routeTree.gen.ts` stays TypeScript because the router tooling writes it. Root config files (`vite.config.js`, `vitest.config.js`) are JavaScript too; `tsconfig.json` stays because the platform tooling reads it by that exact name to resolve the `@/` path alias.
 
