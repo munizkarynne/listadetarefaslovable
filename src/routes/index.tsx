@@ -106,14 +106,14 @@ export function Index() {
                   />
                   <button
                     type="submit"
-                    className="rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground hover:opacity-90"
+                    className="flex-1 rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground hover:opacity-90 sm:flex-none"
                   >
                     Salvar
                   </button>
                   <button
                     type="button"
                     onClick={cancelEdit}
-                    className="rounded-lg border border-input bg-background px-4 py-2 text-sm font-semibold text-foreground hover:bg-accent"
+                    className="flex-1 rounded-lg border border-input bg-background px-4 py-2 text-sm font-semibold text-foreground hover:bg-accent sm:flex-none"
                   >
                     Cancelar
                   </button>
