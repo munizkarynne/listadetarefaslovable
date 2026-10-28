@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import { fireEvent, render, screen, within } from "@testing-library/react";
 import { beforeEach, describe, expect, it } from "vitest";
 
 import { Index } from "@/routes/index";
@@ -69,11 +69,7 @@ describe("Editing a task title", () => {
     fireEvent.click(screen.getByLabelText("Concluir tarefa Estudar matemática"));
     expect(screen.getByLabelText("Concluir tarefa Estudar matemática")).toBeChecked();
 
-    fireEvent.click(
-      screen
-        .getByRole("listitem", { name: /Ler o capítulo 3/ })
-        .getByRole("button", { name: "Remover" }),
-    );
+    removeTask("Ler o capítulo 3");
     expect(screen.queryByText("Ler o capítulo 3")).not.toBeInTheDocument();
     expect(screen.getByText("Estudar matemática")).toBeInTheDocument();
   });
