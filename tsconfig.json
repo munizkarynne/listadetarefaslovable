@@ -4,8 +4,8 @@
     "src/**/*.jsx",
     "src/**/*.ts",
     "src/**/*.tsx",
-    "vite.config.ts",
-    "vitest.config.ts",
+    "vite.config.js",
+    "vitest.config.js",
     "eslint.config.js"
   ],
   "compilerOptions": {
