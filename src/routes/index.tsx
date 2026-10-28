@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -17,9 +17,17 @@ export const Route = createFileRoute("/")({
 
 type Task = { id: number; text: string; done: boolean };
 
-function Index() {
+export function Index() {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [text, setText] = useState("");
+  const [editingId, setEditingId] = useState<number | null>(null);
+  const [draft, setDraft] = useState("");
+  const [editError, setEditError] = useState("");
+  const draftInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (editingId !== null) draftInputRef.current?.focus();
+  }, [editingId]);
 
   const add = (e: React.FormEvent) => {
     e.preventDefault();
@@ -29,19 +37,47 @@ function Index() {
     setText("");
   };
 
+  const toggle = (id: number) =>
+    setTasks(tasks.map((x) => (x.id === id ? { ...x, done: !x.done } : x)));
+
+  const remove = (id: number) => setTasks(tasks.filter((x) => x.id !== id));
+
+  const startEdit = (task: Task) => {
+    setEditingId(task.id);
+    setDraft(task.text);
+    setEditError("");
+  };
+
+  const cancelEdit = () => {
+    setEditingId(null);
+    setDraft("");
+    setEditError("");
+  };
+
+  const saveEdit = (e: React.FormEvent) => {
+    e.preventDefault();
+    const next = draft.trim();
+    if (!next) {
+      setEditError("O título não pode ficar vazio.");
+      return;
+    }
+    setTasks(tasks.map((x) => (x.id === editingId ? { ...x, text: next } : x)));
+    cancelEdit();
+  };
+
   return (
     <main className="min-h-screen bg-background px-4 py-16">
-      <div className="mx-auto max-w-lg rounded-2xl border bg-card p-8 shadow-lg">
+      <div className="mx-auto w-full max-w-lg rounded-2xl border bg-card p-6 shadow-lg sm:p-8">
         <h1 className="text-3xl font-bold text-foreground">Minhas Tarefas</h1>
         <p className="mt-1 text-sm text-muted-foreground">
           {tasks.filter((t) => !t.done).length} pendente(s)
         </p>
-        <form onSubmit={add} className="mt-6 flex gap-2">
+        <form onSubmit={add} className="mt-6 flex flex-wrap gap-2">
           <input
             value={text}
             onChange={(e) => setText(e.target.value)}
             placeholder="Nova tarefa..."
-            className="flex-1 rounded-lg border bg-background px-4 py-2 text-foreground outline-none focus:ring-2 focus:ring-ring"
+            className="min-w-0 flex-1 rounded-lg border bg-background px-4 py-2 text-foreground outline-none focus:ring-2 focus:ring-ring"
           />
           <button className="rounded-lg bg-primary px-5 py-2 font-semibold text-primary-foreground hover:opacity-90">
             Adicionar
@@ -51,27 +87,77 @@ function Index() {
           {tasks.length === 0 && (
             <li className="text-center text-sm text-muted-foreground">Nenhuma tarefa ainda.</li>
           )}
-          {tasks.map((t) => (
-            <li key={t.id} className="flex items-center gap-3 rounded-lg bg-secondary px-4 py-3">
-              <input
-                type="checkbox"
-                checked={t.done}
-                onChange={() =>
-                  setTasks(tasks.map((x) => (x.id === t.id ? { ...x, done: !x.done } : x)))
-                }
-                className="h-5 w-5 accent-primary"
-              />
-              <span className={`flex-1 text-secondary-foreground ${t.done ? "line-through opacity-50" : ""}`}>
-                {t.text}
-              </span>
-              <button
-                onClick={() => setTasks(tasks.filter((x) => x.id !== t.id))}
-                className="text-sm text-destructive hover:underline"
+          {tasks.map((t) =>
+            t.id === editingId ? (
+              <li key={t.id} className="rounded-lg bg-secondary px-3 py-3 sm:px-4">
+                <form onSubmit={saveEdit} className="flex flex-wrap items-center gap-2">
+                  <input
+                    ref={draftInputRef}
+                    value={draft}
+                    onChange={(e) => {
+                      setDraft(e.target.value);
+                      if (editError) setEditError("");
+                    }}
+                    onKeyDown={(e) => {
+                      if (e.key === "Escape") cancelEdit();
+                    }}
+                    aria-label="Editar título da tarefa"
+                    className="w-full min-w-0 rounded-lg border bg-background px-3 py-2 text-secondary-foreground outline-none focus:ring-2 focus:ring-ring sm:flex-1"
+                  />
+                  <button
+                    type="submit"
+                    className="flex-1 rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground hover:opacity-90 sm:flex-none"
+                  >
+                    Salvar
+                  </button>
+                  <button
+                    type="button"
+                    onClick={cancelEdit}
+                    className="flex-1 rounded-lg border border-input bg-background px-4 py-2 text-sm font-semibold text-foreground hover:bg-accent sm:flex-none"
+                  >
+                    Cancelar
+                  </button>
+                </form>
+                {editError && (
+                  <p role="alert" className="mt-2 text-sm text-destructive">
+                    {editError}
+                  </p>
+                )}
+              </li>
+            ) : (
+              <li
+                key={t.id}
+                className="flex flex-wrap items-center gap-2 rounded-lg bg-secondary px-3 py-3 sm:gap-3 sm:px-4"
               >
-                Remover
-              </button>
-            </li>
-          ))}
+                <input
+                  type="checkbox"
+                  checked={t.done}
+                  onChange={() => toggle(t.id)}
+                  aria-label={`Concluir tarefa ${t.text}`}
+                  className="h-5 w-5 shrink-0 accent-primary"
+                />
+                <span
+                  className={`min-w-0 flex-1 text-secondary-foreground ${
+                    t.done ? "line-through opacity-50" : ""
+                  }`}
+                >
+                  {t.text}
+                </span>
+                <button
+                  onClick={() => startEdit(t)}
+                  className="text-sm text-primary hover:underline"
+                >
+                  Editar
+                </button>
+                <button
+                  onClick={() => remove(t.id)}
+                  className="text-sm text-destructive hover:underline"
+                >
+                  Remover
+                </button>
+              </li>
+            ),
+          )}
         </ul>
       </div>
     </main>
