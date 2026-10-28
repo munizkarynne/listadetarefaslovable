@@ -1,5 +1,7 @@
 {
   "include": [
+    "src/**/*.js",
+    "src/**/*.jsx",
     "src/**/*.ts",
     "src/**/*.tsx",
     "vite.config.ts",
@@ -9,6 +11,8 @@
   "compilerOptions": {
     "target": "ES2022",
     "jsx": "react-jsx",
+    "allowJs": true,
+    "checkJs": false,
     "module": "ESNext",
     "lib": ["ES2022", "DOM", "DOM.Iterable"],
     "types": ["vite/client", "vitest/globals"],
